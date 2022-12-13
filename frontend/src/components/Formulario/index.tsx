@@ -1,51 +1,117 @@
 import React, { useState } from 'react';
-import { Form, FormGroup, Button, ButtonGroup, Label } from 'reactstrap';
+import { Form, FormGroup, Button, ButtonGroup, Label, Input } from 'reactstrap';
 import { MainContainer } from './styles';
 
 const Formulario: React.FC = () => {
-  const [radioPart1, setRadioPart1] = useState<number>(1);
-  const [radioPart2, setRadioPart2] = useState<number>(1);
+  const [isViga, setIsViga] = useState<boolean>(true);
+  const [isDimensionamento, setIsDimensionamento] = useState<boolean>(true);
+
+  const concreteOptions = [
+    {id: 0, label: 'C20', valor: 20},
+    {id: 1, label: 'C25', valor: 25},
+    {id: 2, label: 'C30', valor: 30},
+    {id: 3, label: 'C50', valor: 50}
+  ];
+  
+  const steelOptions = [
+    {id: 0, label: 'CA50', valor: 50},
+    {id: 1, label: 'CA60', valor: 60}
+  ];
+
+  const handleClasse = (event: any) => {
+    console.log(event.target.value);
+  }
 
   return (
     <MainContainer>
       <Form>
         <FormGroup className="form-group" check>
-          <p> Selecione para qual será feito o cálculo:</p>
+          <p> Selecione para qual estrutura será feito o cálculo:</p>
           <ButtonGroup>
             <Button
               outline
-              onClick={() => setRadioPart1(1)}
-              active={radioPart1 === 1}
+              onClick={() => setIsViga(true)}
+              active={isViga}
             >
-              Não lembro
+              Viga
             </Button>
             <Button
               outline
-              onClick={() => setRadioPart1(2)}
-              active={radioPart1 === 2}
+              onClick={() => setIsViga(false)}
+              active={!isViga}
             >
               Laje
             </Button>
           </ButtonGroup>
         </FormGroup>
         <FormGroup check>
-          <p> Selecione para qual será feito o cálculo:</p>
+          <p> Escolha o tipo de cálculo:</p>
           <ButtonGroup>
             <Button
               outline
-              onClick={() => setRadioPart2(1)}
-              active={radioPart2 === 1}
+              onClick={() => setIsDimensionamento(true)}
+              active={isDimensionamento}
             >
-              Sei lá 1
+              Dimensionamento
             </Button>
             <Button
               outline
-              onClick={() => setRadioPart2(2)}
-              active={radioPart2 === 2}
+              onClick={() => setIsDimensionamento(false)}
+              active={!isDimensionamento}
             >
-              Sei lá 2
+              Análise
             </Button>
           </ButtonGroup>
+        </FormGroup>
+        <div className="classes">
+          <FormGroup className="select-options">
+            <p> Selecione a classe do concreto: </p>
+            <Input
+              className="mb-3"
+              type="select"
+              onChange={(event) => handleClasse(event)}
+            >
+              {concreteOptions.map(opt => <option key={opt.id} value={opt.valor}> {opt.label} </option>)}
+            </Input>
+          </FormGroup>
+          <FormGroup className="select-options">
+            <p> Selecione a classe do aço: </p>
+            <Input
+              className="mb-3"
+              type="select"
+              onChange={(event) => handleClasse(event)}
+            >
+              {steelOptions.map(opt => <option key={opt.id} value={opt.valor}> {opt.label} </option>)}
+            </Input>
+          </FormGroup>
+        </div>
+        <FormGroup className="variables">
+          {isDimensionamento && (
+            <div className="number-input">
+              <p>Momento fletor</p>
+              <Input className="md" type="text" />
+            </div>  
+          )}
+          {!isDimensionamento &&(
+            <div className="number-input">
+              <p>Área de aço</p>
+              <Input className="md" type="text" />
+            </div>  
+          )}
+          {isViga && (
+            <div className="number-input">
+              <p>Base</p>
+              <Input className="md" type="text" />
+            </div>
+          )}
+          <div className="number-input">
+            <p>Altura</p>
+            <Input className="md" type="text" />
+          </div>  
+          <div className="number-input">
+            <p>Altura útil</p>
+            <Input className="md" type="text" />
+          </div>  
         </FormGroup>
       </Form>
       </MainContainer>
