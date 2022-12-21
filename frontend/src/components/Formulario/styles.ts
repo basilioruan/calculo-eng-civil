@@ -22,15 +22,44 @@ export const MainContainer = styled.div`
       }
     }
 
+    .unidades {
+      font-weight: normal;
+      font-size: 14px;
+      font-style: italic;
+    }
+
     .variables {
       display: flex;
-      margin-top: 2rem;
 
       .number-input {
         margin-left: 1.6rem;
         .md {
           width: 45%;
         }
+      }
+    }
+
+    .result {
+      display: flex;
+      justify-content: center;
+
+      margin-top: 3rem;
+
+      .result-number {
+        font-weight: normal;
+        font-size: 16px;
+      }
+    }
+
+    .btn-footer {
+      display: flex;
+      justify-content: center;
+
+      margin-top: 3rem;
+
+      .btn-calcular {
+        width: 300px;
+        margin: 0 auto;
       }
     }
   `}

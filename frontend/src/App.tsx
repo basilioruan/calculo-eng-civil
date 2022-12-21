@@ -1,13 +1,14 @@
 import React from 'react';
-import Formulario from './components/Formulario';
-import Titulo from './components/Titulo';
-import { MainContainer } from './styles';
+import CardComponent from './components/CardComponent';
+import { ImageBackground, MainContainer } from './styles';
+// import FundoApp from '../assets/img/FundoApp.png';
 
 function App() {
   return (
     <MainContainer>
-      <Titulo titulo='TCC Matheusa' />
-      <Formulario />
+      {/* <ImageBackground> */}
+        <CardComponent />
+      {/* </ImageBackground> */}
     </MainContainer>
   );
 }
