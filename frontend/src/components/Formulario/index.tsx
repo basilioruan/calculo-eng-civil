@@ -63,7 +63,7 @@ const Formulario: React.FC = () => {
 
   const calcularResultado = () => {
     let C = 0;
-    if (momentoFletor && classeConcreto && base && alturaUtil){
+    if (momentoFletor && classeConcreto && base && alturaUtil) {
       C = momentoFletor / (0.68 * (classeConcreto / 1.4) * base * Math.pow(alturaUtil, 2));
     }
     const baskhara = calcularBhaskara(-0.4, 1, -C);
@@ -176,7 +176,7 @@ const Formulario: React.FC = () => {
             <p>Resultado: <span className="result-number">{result}</span><span className="unidades"> cm²</span></p>
         </div>
         <div className="btn-footer">
-          <Button outline className="btn-calcular">Limpar</Button>
+          <Button className="btn-calcular">Limpar</Button>
           <Button className="btn-calcular" onClick={calcularResultado}>Calcular</Button>
         </div>
       </Form>
