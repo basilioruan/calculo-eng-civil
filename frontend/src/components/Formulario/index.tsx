@@ -3,18 +3,24 @@ import { Form, FormGroup, Button, ButtonGroup, Label, Input } from 'reactstrap';
 import { MainContainer } from './styles';
 
 const Formulario: React.FC = () => {
-  const [isViga, setIsViga] = useState<boolean>(true);
-  const [isDimensionamento, setIsDimensionamento] = useState<boolean>(true);
   const [result, setResult] = useState<string>();
+  const [error, setError] = useState<boolean>(false);
 
   // VARIABLES
-  const [momentoFletor, setMomentoFletor] = useState<number>();
-  const [areaAco, setAreaAco] = useState<number>();
-  const [base, setBase] = useState<number>();
-  const [alturaUtil, setAlturaUtil] = useState<number>();
-  const [altura, setAltura] = useState<number>();
+  const [isViga, setIsViga] = useState<boolean>(true);
+  const [isDimensionamento, setIsDimensionamento] = useState<boolean>(true);
   const [classeConcreto, setClasseConcreto] = useState<number>(2);
   const [classeAco, setClasseAco] = useState<number>(50);
+  const [momentoFletor, setMomentoFletor] = useState<number>();
+  const [momentoFletorValidation, setMomentoFletorValidation] = useState<boolean>(false);
+  const [areaAco, setAreaAco] = useState<number>();
+  const [areaAcoValidation, setAreaAcoValidation] = useState<boolean>(false);
+  const [base, setBase] = useState<number>();
+  const [baseValidation, setBaseValidation] = useState<boolean>(false);
+  const [alturaUtil, setAlturaUtil] = useState<number>();
+  const [alturaUtilValidation, setAlturaUtilValidation] = useState<boolean>(false);
+  const [altura, setAltura] = useState<number>();
+  const [alturaValidation, setAlturaValidation] = useState<boolean>(false);
 
   const concreteOptions = [
     {id: 0, label: 'C20', valor: 2},
@@ -34,6 +40,12 @@ const Formulario: React.FC = () => {
   
   const handleClasseAco = (event: any) => {
     setClasseAco(event.target.value);
+  }
+
+  const handleStructure = () => {
+    setBase(1);
+    setIsViga(false);
+    console.log(base);
   }
 
   const calcularBhaskara = (A: number, B: number, C: number) => {
@@ -61,7 +73,32 @@ const Formulario: React.FC = () => {
     }
   }
 
+  const validaFormulario = () => {
+    if (isViga) {
+      const validationMomentoFletor = momentoFletor === undefined || Number.isNaN(momentoFletor);
+      setMomentoFletorValidation(validationMomentoFletor);
+
+      const validationBase = base === undefined || Number.isNaN(base);
+      setBaseValidation(validationBase);
+
+      const validationAltura = altura === undefined || Number.isNaN(altura);
+      setAlturaValidation(validationAltura);
+
+      const validationAlturaUtil = alturaUtil === undefined || Number.isNaN(alturaUtil);
+      setAlturaUtilValidation(validationAlturaUtil);
+
+      const validationError = validationMomentoFletor || validationBase || validationAltura || validationAlturaUtil;
+
+      setError(validationError);
+      return validationError;
+    }
+  }
+
   const calcularResultado = () => {
+    if (validaFormulario()) {
+      return;
+    }
+
     let C = 0;
     if (momentoFletor && classeConcreto && base && alturaUtil) {
       C = momentoFletor / (0.68 * (classeConcreto / 1.4) * base * Math.pow(alturaUtil, 2));
@@ -96,7 +133,7 @@ const Formulario: React.FC = () => {
             </Button>
             <Button
               outline
-              onClick={() => setIsViga(false)}
+              onClick={handleStructure}
               active={!isViga}
             >
               Laje
@@ -148,32 +185,33 @@ const Formulario: React.FC = () => {
           {isDimensionamento && (
             <div className="number-input">
               <p>Momento fletor <span className="unidades">(cm)</span></p>
-              <Input className="md" type="number" onChange={(event) => {setMomentoFletor(parseFloat(event.target.value))}} />
+              <Input invalid={momentoFletorValidation} className="md" type="number" onChange={(event) => {setMomentoFletor(parseFloat(event.target.value))}} />
             </div>  
           )}
           {!isDimensionamento &&(
             <div className="number-input">
               <p>Área de aço <span className="unidades">(cm)</span></p>
-              <Input className="md" type="number" onChange={(event) => {setAreaAco(parseFloat(event.target.value))}} />
+              <Input invalid={areaAcoValidation} className="md" type="number" onChange={(event) => {setAreaAco(parseFloat(event.target.value))}} />
             </div>  
           )}
           {isViga && (
             <div className="number-input">
               <p>Base <span className="unidades">(cm)</span></p>
-              <Input className="md" type="number" onChange={(event) => {setBase(parseFloat(event.target.value))}} />
+              <Input invalid={baseValidation} className="md" type="number" onChange={(event) => {setBase(parseFloat(event.target.value))}} />
             </div>
           )}
           <div className="number-input">
             <p>Altura <span className="unidades">(cm)</span></p>
-            <Input className="md" type="number" onChange={(event) => {setAltura(parseFloat(event.target.value))}} />
+            <Input invalid={alturaValidation} className="md" type="number" onChange={(event) => {setAltura(parseFloat(event.target.value))}} />
           </div>  
           <div className="number-input">
             <p>Altura útil <span className="unidades">(cm)</span></p>
-            <Input className="md" type="number" onChange={(event) => {setAlturaUtil(parseFloat(event.target.value))}} />
+            <Input invalid={alturaUtilValidation} className="md" type="number" onChange={(event) => {setAlturaUtil(parseFloat(event.target.value))}} />
           </div>  
         </FormGroup>
         <div className="result">
-            <p>Resultado: <span className="result-number">{result}</span><span className="unidades"> cm²</span></p>
+            {result && <p>Resultado: <span className="result-number">{result}</span><span className="unidades"> cm²</span></p> }
+            {error && <p className="error">*Campos obrigatórios não preenchidos</p> }
         </div>
         <div className="btn-footer">
           <Button className="btn-calcular">Limpar</Button>

@@ -49,6 +49,10 @@ export const MainContainer = styled.div`
         font-weight: normal;
         font-size: 16px;
       }
+
+      .error {
+        color: #b22222
+      }
     }
 
     .btn-footer {

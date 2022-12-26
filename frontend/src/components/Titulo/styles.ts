@@ -10,7 +10,7 @@ export const MainContainer = styled.div`
 
     font-family: Arial;
 
-    color: #363636;
+    color: #4f4f4f;
     h1 { 
       font-weight: bold;   
     }
