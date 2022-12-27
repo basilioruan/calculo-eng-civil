@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Form, FormGroup, Button, ButtonGroup, Label, Input } from 'reactstrap';
+import { Form, FormGroup, Button, ButtonGroup, Input } from 'reactstrap';
 import { MainContainer } from './styles';
-import { CiCalculator2 } from 'react-icons/ci';
 import { GiBroom } from 'react-icons/gi';
 import { TbMathFunction } from 'react-icons/tb';
 
@@ -14,15 +13,15 @@ const Formulario: React.FC = () => {
   const [isDimensionamento, setIsDimensionamento] = useState<boolean>(true);
   const [classeConcreto, setClasseConcreto] = useState<number>(2);
   const [classeAco, setClasseAco] = useState<number>(50);
-  const [momentoFletor, setMomentoFletor] = useState<number>();
+  const [momentoFletor, setMomentoFletor] = useState<string>('');
   const [momentoFletorValidation, setMomentoFletorValidation] = useState<boolean>(false);
-  const [areaAco, setAreaAco] = useState<number>();
+  const [areaAco, setAreaAco] = useState<string>('');
   const [areaAcoValidation, setAreaAcoValidation] = useState<boolean>(false);
-  const [base, setBase] = useState<number>();
+  const [base, setBase] = useState<string>('');
   const [baseValidation, setBaseValidation] = useState<boolean>(false);
-  const [alturaUtil, setAlturaUtil] = useState<number>();
+  const [alturaUtil, setAlturaUtil] = useState<string>('');
   const [alturaUtilValidation, setAlturaUtilValidation] = useState<boolean>(false);
-  const [altura, setAltura] = useState<number>();
+  const [altura, setAltura] = useState<string>('');
   const [alturaValidation, setAlturaValidation] = useState<boolean>(false);
 
   const concreteOptions = [
@@ -46,9 +45,8 @@ const Formulario: React.FC = () => {
   }
 
   const handleStructure = () => {
-    setBase(1);
+    setBase('1');
     setIsViga(false);
-    console.log(base);
   }
 
   const calcularBhaskara = (A: number, B: number, C: number) => {
@@ -69,25 +67,25 @@ const Formulario: React.FC = () => {
   }
 
   const calcularAreaAco = (bx: number) => {
-    console.log(bx);
-    if (base && alturaUtil && classeAco){
-      const areaAco = (0.68 * (classeConcreto / 1.4) * base * alturaUtil * bx) / (classeAco / 1.15);
-      return areaAco;
-    }
+    const b = parseFloat(base);
+    const altUtil = parseFloat(alturaUtil);
+    const areaAco = (0.68 * (classeConcreto / 1.4) * b * altUtil * bx) / (classeAco / 1.15);
+
+    return areaAco;
   }
 
   const validaFormulario = () => {
     if (isViga) {
-      const validationMomentoFletor = momentoFletor === undefined || Number.isNaN(momentoFletor);
+      const validationMomentoFletor = !momentoFletor;
       setMomentoFletorValidation(validationMomentoFletor);
 
-      const validationBase = base === undefined || Number.isNaN(base);
+      const validationBase = !base;
       setBaseValidation(validationBase);
 
-      const validationAltura = altura === undefined || Number.isNaN(altura);
+      const validationAltura = !altura;
       setAlturaValidation(validationAltura);
 
-      const validationAlturaUtil = alturaUtil === undefined || Number.isNaN(alturaUtil);
+      const validationAlturaUtil = !alturaUtil;
       setAlturaUtilValidation(validationAlturaUtil);
 
       const validationError = validationMomentoFletor || validationBase || validationAltura || validationAlturaUtil;
@@ -103,9 +101,11 @@ const Formulario: React.FC = () => {
     }
 
     let C = 0;
-    if (momentoFletor && classeConcreto && base && alturaUtil) {
-      C = momentoFletor / (0.68 * (classeConcreto / 1.4) * base * Math.pow(alturaUtil, 2));
-    }
+    const mf = parseFloat(momentoFletor);
+    const b = parseFloat(base);
+    const altUtil = parseFloat((alturaUtil));
+
+    C = mf / (0.68 * (classeConcreto / 1.4) * b * Math.pow(altUtil, 2));
     const baskhara = calcularBhaskara(-0.4, 1, -C);
 
     if (baskhara > 0 && baskhara < 0.1667) {
@@ -120,6 +120,22 @@ const Formulario: React.FC = () => {
     }
   }
 
+  const limparCampos = () => {
+    setIsViga(true);
+    setIsDimensionamento(true);
+    setClasseConcreto(2);
+    setClasseAco(50);
+    setMomentoFletor('');
+    setMomentoFletorValidation(false);
+    setBase('');
+    setBaseValidation(false);
+    setAltura('');
+    setAlturaValidation(false);
+    setAlturaUtil('');
+    setAlturaUtilValidation(false);
+    setResult('');
+    setError(false);
+  }
 
   return (
     <MainContainer>
@@ -169,6 +185,7 @@ const Formulario: React.FC = () => {
               className="mb-3"
               type="select"
               onChange={(event) => handleClasseConcreto(event)}
+              value={classeConcreto}
             >
               {concreteOptions.map(opt => <option key={opt.id} value={opt.valor}> {opt.label} </option>)}
             </Input>
@@ -179,6 +196,7 @@ const Formulario: React.FC = () => {
               className="mb-3"
               type="select"
               onChange={(event) => handleClasseAco(event)}
+              value={classeAco}
             >
               {steelOptions.map(opt => <option key={opt.id} value={opt.valor}> {opt.label} </option>)}
             </Input>
@@ -188,28 +206,28 @@ const Formulario: React.FC = () => {
           {isDimensionamento && (
             <div className="number-input">
               <p>Momento fletor <span className="unidades">(cm)</span></p>
-              <Input invalid={momentoFletorValidation} className="md" type="number" onChange={(event) => {setMomentoFletor(parseFloat(event.target.value))}} />
+              <Input invalid={momentoFletorValidation} value={momentoFletor} className="md" type="number" onChange={(event) => {setMomentoFletor(event.target.value)}} />
             </div>  
           )}
           {!isDimensionamento &&(
             <div className="number-input">
               <p>Área de aço <span className="unidades">(cm)</span></p>
-              <Input invalid={areaAcoValidation} className="md" type="number" onChange={(event) => {setAreaAco(parseFloat(event.target.value))}} />
+              <Input invalid={areaAcoValidation} value={areaAco} className="md" type="number" onChange={(event) => {setAreaAco(event.target.value)}} />
             </div>  
           )}
           {isViga && (
             <div className="number-input">
               <p>Base <span className="unidades">(cm)</span></p>
-              <Input invalid={baseValidation} className="md" type="number" onChange={(event) => {setBase(parseFloat(event.target.value))}} />
+              <Input invalid={baseValidation} value={base} className="md" type="number" onChange={(event) => {setBase(event.target.value)}} />
             </div>
           )}
           <div className="number-input">
             <p>Altura <span className="unidades">(cm)</span></p>
-            <Input invalid={alturaValidation} className="md" type="number" onChange={(event) => {setAltura(parseFloat(event.target.value))}} />
+            <Input invalid={alturaValidation} value={altura} className="md" type="number" onChange={(event) => {setAltura(event.target.value)}} />
           </div>  
           <div className="number-input">
             <p>Altura útil <span className="unidades">(cm)</span></p>
-            <Input invalid={alturaUtilValidation} className="md" type="number" onChange={(event) => {setAlturaUtil(parseFloat(event.target.value))}} />
+            <Input invalid={alturaUtilValidation} value={alturaUtil} className="md" type="number" onChange={(event) => {setAlturaUtil(event.target.value)}} />
           </div>  
         </FormGroup>
         <div className="result">
@@ -217,7 +235,7 @@ const Formulario: React.FC = () => {
             {error && <p className="error">*Campos obrigatórios não preenchidos</p> }
         </div>
         <div className="btn-footer">
-          <Button className="btn-calcular">
+          <Button className="btn-calcular" onClick={limparCampos}>
             <GiBroom className="icon" size={20} />
             Limpar
           </Button>
