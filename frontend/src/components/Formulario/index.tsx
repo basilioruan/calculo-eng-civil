@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Form, FormGroup, Button, ButtonGroup, Label, Input } from 'reactstrap';
 import { MainContainer } from './styles';
+import { CiCalculator2 } from 'react-icons/ci';
+import { GiBroom } from 'react-icons/gi';
+import { TbMathFunction } from 'react-icons/tb';
 
 const Formulario: React.FC = () => {
   const [result, setResult] = useState<string>();
@@ -214,8 +217,14 @@ const Formulario: React.FC = () => {
             {error && <p className="error">*Campos obrigatórios não preenchidos</p> }
         </div>
         <div className="btn-footer">
-          <Button className="btn-calcular">Limpar</Button>
-          <Button className="btn-calcular" onClick={calcularResultado}>Calcular</Button>
+          <Button className="btn-calcular">
+            <GiBroom className="icon" size={20} />
+            Limpar
+          </Button>
+          <Button className="btn-calcular" onClick={calcularResultado}>
+            <TbMathFunction className="icon" size={20} />
+            Calcular
+          </Button>
         </div>
       </Form>
     </MainContainer>

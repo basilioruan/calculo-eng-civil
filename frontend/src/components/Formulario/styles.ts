@@ -65,6 +65,10 @@ export const MainContainer = styled.div`
         width: 300px;
         margin: 0 auto;
       }
+
+      .icon {
+        margin-right: 0.5rem;
+      }
     }
   `}
 `
