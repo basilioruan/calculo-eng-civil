@@ -92,7 +92,8 @@ const Formulario: React.FC = () => {
       const validationError = validationMomentoFletor || validationBase || validationAltura || validationAlturaUtil;
 
       if (validationError) {
-        setErrorLabel('Campos obrigatórios não preenchidos')
+        setErrorLabel('Campos obrigatórios não preenchidos');
+        setResult('');
       }
 
       setError(validationError);
@@ -127,6 +128,7 @@ const Formulario: React.FC = () => {
     else {
       console.log('error');
       setError(true);
+      setResult('');
       setErrorLabel('Erro ao cálcular: valores resultam raizes inválidas');
     }
   }
