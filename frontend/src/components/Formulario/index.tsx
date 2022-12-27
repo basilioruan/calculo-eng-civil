@@ -7,6 +7,7 @@ import { TbMathFunction } from 'react-icons/tb';
 const Formulario: React.FC = () => {
   const [result, setResult] = useState<string>();
   const [error, setError] = useState<boolean>(false);
+  const [errorLabel, setErrorLabel] = useState<string>();
 
   // VARIABLES
   const [isViga, setIsViga] = useState<boolean>(true);
@@ -90,6 +91,10 @@ const Formulario: React.FC = () => {
 
       const validationError = validationMomentoFletor || validationBase || validationAltura || validationAlturaUtil;
 
+      if (validationError) {
+        setErrorLabel('Campos obrigatórios não preenchidos')
+      }
+
       setError(validationError);
       return validationError;
     }
@@ -112,11 +117,17 @@ const Formulario: React.FC = () => {
       console.log('condição 1');
     }
     else if (baskhara >= 0.1667 && baskhara < 0.45) {
+      console.log('condição 2');
       const resultado = calcularAreaAco(baskhara) || 0;
       setResult(resultado.toFixed(4).replace('.', ','));
     }
     else if (baskhara >= 0.45 && baskhara < 1) {
       console.log('condição 3');
+    }
+    else {
+      console.log('error');
+      setError(true);
+      setErrorLabel('Erro ao cálcular: valores resultam raizes inválidas');
     }
   }
 
@@ -232,7 +243,7 @@ const Formulario: React.FC = () => {
         </FormGroup>
         <div className="result">
             {result && <p>Resultado: <span className="result-number">{result}</span><span className="unidades"> cm²</span></p> }
-            {error && <p className="error">*Campos obrigatórios não preenchidos</p> }
+            {error && <p className="error">*{errorLabel}</p> }
         </div>
         <div className="btn-footer">
           <Button className="btn-calcular" onClick={limparCampos}>
