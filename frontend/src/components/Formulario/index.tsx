@@ -11,6 +11,8 @@ const Formulario: React.FC = () => {
 
   // VARIABLES
   const [isViga, setIsViga] = useState<boolean>(true);
+  const [isLaje, setIsLaje] = useState<boolean>(false);
+  const [isPilar, setIsPilar] = useState<boolean>(false);
   const [isDimensionamento, setIsDimensionamento] = useState<boolean>(true);
   const [classeConcreto, setClasseConcreto] = useState<number>(2);
   const [classeAco, setClasseAco] = useState<number>(50);
@@ -45,9 +47,25 @@ const Formulario: React.FC = () => {
     setClasseAco(event.target.value);
   }
 
-  const handleStructure = () => {
-    setBase('1');
+  const handleVigaStructure = () => {
+    setBase('');
+    setIsViga(true);
+    setIsLaje(false);
+    setIsPilar(false);
+  }
+
+  const handleLajeStructure = () => {
+    setBase('100');
     setIsViga(false);
+    setIsLaje(true);
+    setIsPilar(false);
+  }
+
+  const handlePilarStructure = () => {
+    setBase('');
+    setIsViga(false);
+    setIsLaje(false);
+    setIsPilar(true);
   }
 
   const calcularBhaskara = (A: number, B: number, C: number) => {
@@ -75,6 +93,12 @@ const Formulario: React.FC = () => {
     return areaAco;
   }
 
+  const calcularArmaduraDupla = (bx: number) => {
+    const b = parseFloat(base);
+    const d = parseFloat(alturaUtil)
+    return 0;
+  }
+
   const validaFormulario = () => {
     if (isViga) {
       const validationMomentoFletor = !momentoFletor;
@@ -99,6 +123,12 @@ const Formulario: React.FC = () => {
       setError(validationError);
       return validationError;
     }
+    else if (isLaje) {
+
+    }
+    else {
+
+    }
   }
 
   const calcularResultado = () => {
@@ -106,30 +136,36 @@ const Formulario: React.FC = () => {
       return;
     }
 
-    let C = 0;
-    const mf = parseFloat(momentoFletor);
-    const b = parseFloat(base);
-    const altUtil = parseFloat((alturaUtil));
+    if (isViga || isLaje) {
+      let C = 0;
+      const mf = parseFloat(momentoFletor);
+      const b = parseFloat(base);
+      console.log(b);
+      const altUtil = parseFloat((alturaUtil));
 
-    C = mf / (0.68 * (classeConcreto / 1.4) * b * Math.pow(altUtil, 2));
-    const baskhara = calcularBhaskara(-0.4, 1, -C);
+      C = mf / (0.68 * (classeConcreto / 1.4) * b * Math.pow(altUtil, 2));
+      const baskhara = calcularBhaskara(-0.4, 1, -C);
 
-    if (baskhara > 0 && baskhara < 0.1667) {
-      console.log('condição 1');
-    }
-    else if (baskhara >= 0.1667 && baskhara < 0.45) {
-      console.log('condição 2');
-      const resultado = calcularAreaAco(baskhara) || 0;
-      setResult(resultado.toFixed(4).replace('.', ','));
-    }
-    else if (baskhara >= 0.45 && baskhara < 1) {
-      console.log('condição 3');
-    }
-    else {
-      console.log('error');
-      setError(true);
-      setResult('');
-      setErrorLabel('Erro ao cálcular: valores resultam raizes inválidas');
+      if (baskhara > 0 && baskhara < 0.1667) {
+        console.log('condição 1');
+      }
+      else if (baskhara >= 0.1667 && baskhara < 0.45) {
+        console.log('condição 2');
+        const resultado = calcularAreaAco(baskhara) || 0;
+        setResult(resultado.toFixed(4).replace('.', ','));
+      }
+      else if (baskhara >= 0.45 && baskhara < 1) {
+        const resultado = calcularArmaduraDupla(baskhara);
+        setResult(resultado.toFixed(4).replace('.', ','));
+      }
+      else {
+        console.log('error');
+        setError(true);
+        setResult('');
+        setErrorLabel('Erro ao cálcular: valores resultam raizes inválidas');
+      }
+    } else {
+
     }
   }
 
@@ -158,17 +194,24 @@ const Formulario: React.FC = () => {
           <ButtonGroup>
             <Button
               outline
-              onClick={() => setIsViga(true)}
+              onClick={handleVigaStructure}
               active={isViga}
             >
               Viga
             </Button>
             <Button
               outline
-              onClick={handleStructure}
-              active={!isViga}
+              onClick={handleLajeStructure}
+              active={isLaje}
             >
               Laje
+            </Button>
+            <Button
+              outline
+              onClick={handlePilarStructure}
+              active={isPilar}
+            >
+              Pilar
             </Button>
           </ButtonGroup>
         </FormGroup>
